@@ -1,0 +1,2617 @@
+
+{
+
+    "openapi": "3.0.1",
+    "info": {
+        "title": "Assignment Microservice API",
+        "description": "Assignment Micro Service <a target=\"_blank\" href=\"/assignment-api/assignment-service-class.puml\">Class Diagram</a>",
+        "termsOfService": "http://swagger.io/terms/",
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://springdoc.org"
+        },
+        "version": "1.0.0"
+    },
+    "externalDocs": {
+        "description": "Sequence Diagram",
+        "url": "/assignment-api/assignment-service-sequence.puml"
+    },
+    "servers": [
+        {
+            "url": "http://corpqavl204.corp.aires.com:8005/assignment-api",
+            "description": "Generated server url"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Batch Transferees",
+            "description": "Endpoints for batch transferee operations"
+        },
+        {
+            "name": "Assignment Batch",
+            "description": "Endpoints for assignment batch operations"
+        },
+        {
+            "name": "Transferees",
+            "description": "Endpoints for transferee operations"
+        },
+        {
+            "name": "Assignments",
+            "description": "Endpoints for assignment operations"
+        }
+    ],
+    "paths": {
+        "/assignments/sync-employee-resource": {
+            "post": {
+                "tags": [
+                    "Assignments"
+                ],
+                "summary": " Employee resource sync date updated",
+                "description": "Endpoint to determine if an  IRIS assignment employee resource is  updated with sync date ",
+                "operationId": "syncEmployeeResourceWebhook",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EmployeeResourceMetaDTO"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Synched",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EmployeeResponseDTO"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "content": {
+                            "\"application/json\"": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/assignments/assignment-mapping/{assignmentId}": {
+            "get": {
+                "tags": [
+                    "Assignments"
+                ],
+                "summary": "Check assignment is synched with Apro",
+                "description": "Endpoint to determine if an IRIS assignment is already synched with APro or not by passing input an assignmentId.",
+                "operationId": "getAssignmentMappingByAssignmentId",
+                "parameters": [
+                    {
+                        "name": "assignmentId",
+                        "in": "path",
+                        "description": "assignmentId is required",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "content": {
+                            "\"application/json\"": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/assignments/sync-link-unlink": {
+            "post": {
+                "tags": [
+                    "Assignments"
+                ],
+                "summary": "Fix Link-Unlink Assignments",
+                "description": "Endpoint which will sync link/unlinked assignments + assignments that switched companies",
+                "operationId": "linkUnlinkedAssignments",
+                "responses": {
+                    "200": {
+                        "description": "Move Assignments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "content": {
+                            "\"application/json\"": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/assignments/sync": {
+            "post": {
+                "tags": [
+                    "Assignments"
+                ],
+                "summary": "Sync updated assignments to partner",
+                "description": "Endpoint which will sync recently updated assignments from IRIS to a 3rd party system",
+                "operationId": "syncAssignments",
+                "responses": {
+                    "200": {
+                        "description": "Synched",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "content": {
+                            "\"application/json\"": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/assignments/{assignmentId}": {
+            "get": {
+                "tags": [
+                    "Assignments"
+                ],
+                "summary": "Get assignment by id",
+                "description": "Endpoint which will retrieve an assignment from 3rd party system by passing in an assignmentId.",
+                "operationId": "getAssignmentById",
+                "parameters": [
+                    {
+                        "name": "assignmentId",
+                        "in": "path",
+                        "description": "assignmentId is required",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "\"application/json\"": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Assignment"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "\"application/json\"": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "\"application/json\"": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "\"application/json\"": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "content": {
+                            "\"application/json\"": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Assignments"
+                ],
+                "summary": "Update an assignment",
+                "description": "Endpoint which will update an assignment in 3rd party system",
+                "operationId": "updateAssignmentFromAssignmentId",
+                "parameters": [
+                    {
+                        "name": "assignmentId",
+                        "in": "path",
+                        "description": "assignmentId is required",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentDTO"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "content": {
+                            "\"application/json\"": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Assignments"
+                ],
+                "summary": "Create an assignment",
+                "description": "Endpoint which will create a new assignment record in a 3rd party system based on an existing IRIS assignment",
+                "operationId": "createAssignmentFromAssignmentId",
+                "parameters": [
+                    {
+                        "name": "assignmentId",
+                        "in": "path",
+                        "description": "assignmentId is required",
+                        "required": true,
+                        "schema": {
+                            "minimum": 0,
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentDTO"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "content": {
+                            "\"application/json\"": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/transferees/{transfereeId}": {
+            "get": {
+                "tags": [
+                    "Transferees"
+                ],
+                "summary": "Get Transferee details",
+                "description": "Endpoint which retrieves a transferee object from 3rd party system",
+                "operationId": "getAProEmployee",
+                "parameters": [
+                    {
+                        "name": "transfereeId",
+                        "in": "path",
+                        "description": "transfereeId is required",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EmployeeDTO"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "content": {
+                            "\"application/json\"": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Transferees"
+                ],
+                "summary": "Create Transferee By Id",
+                "description": "Endpoint which creates a transferee object in 3rd party system",
+                "operationId": "createAProEmployeeById",
+                "parameters": [
+                    {
+                        "name": "transfereeId",
+                        "in": "path",
+                        "description": "transfereeId is required",
+                        "required": true,
+                        "schema": {
+                            "minimum": 1,
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EmployeeDTO"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "content": {
+                            "\"application/json\"": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Transferees"
+                ],
+                "summary": "Update Transferee Details",
+                "description": "Endpoint which updates Transfere details from the passed Transferee input object to 3rd party system",
+                "operationId": "updateAProEmployee",
+                "parameters": [
+                    {
+                        "name": "transfereeId",
+                        "in": "path",
+                        "description": "transfereeId is required",
+                        "required": true,
+                        "schema": {
+                            "minimum": 1,
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EmployeeDTO"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "content": {
+                            "\"application/json\"": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/transferees/sync": {
+            "post": {
+                "tags": [
+                    "Transferees"
+                ],
+                "summary": "Sync updated transferees to partner",
+                "description": "Endpoint which will sync recently updated transferees from IRIS to a 3rd party system",
+                "operationId": "syncTransferees",
+                "responses": {
+                    "200": {
+                        "description": "Synched",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "content": {
+                            "\"application/json\"": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/transferees/parent-transferee-mapping/{parentTransfereeId}": {
+            "get": {
+                "tags": [
+                    "Transferees"
+                ],
+                "summary": "Check Transferee Synched with Apro",
+                "description": "Endpoint which checking the parentTransfereeId record has been synched by passing parentTransfereeId ",
+                "operationId": "getParentTransfereeMapping",
+                "parameters": [
+                    {
+                        "name": "parentTransfereeId",
+                        "in": "path",
+                        "description": "parentTransfereeId is required",
+                        "required": true,
+                        "schema": {
+                            "minimum": 1,
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "content": {
+                            "\"application/json\"": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/batch/assignments": {
+            "put": {
+                "tags": [
+                    "Assignment Batch"
+                ],
+                "summary": "Update an assignment batch ",
+                "description": "Endpoint which will update an assignment list in 3rd party system",
+                "operationId": "updateAssignmentBatch",
+                "parameters": [
+                    {
+                        "name": "assignmentIds",
+                        "in": "query",
+                        "description": "assignmentId is required",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "content": {
+                            "\"application/json\"": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Assignment Batch"
+                ],
+                "summary": "Create list of assignments ",
+                "description": "Endpoint which will create a batch of assignment records in a 3rd party system based on an given list of IRIS assignments",
+                "operationId": "createAssignmentBatch",
+                "parameters": [
+                    {
+                        "name": "assignmentIds",
+                        "in": "query",
+                        "description": "assignmentId is required",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/AssignmentDTO"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "content": {
+                            "\"application/json\"": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/batch/transferees": {
+            "post": {
+                "tags": [
+                    "Batch Transferees"
+                ],
+                "summary": "Create Multiple Transferees by List of ids",
+                "description": "Endpoint which creates multiple transferee objects in 3rd party system",
+                "operationId": "batchCreateAProEmployees",
+                "parameters": [
+                    {
+                        "name": "transfereeIds",
+                        "in": "query",
+                        "description": "list of transferee ids are required",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "content": {
+                            "\"application/json\"": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Batch Transferees"
+                ],
+                "summary": "Batch Update Transferee Details",
+                "description": "Endpoint which will update multiple Transferee details from the passed list of Transferee Input Objects to a 3rd party system",
+                "operationId": "batchUpdateAProEmployee",
+                "parameters": [
+                    {
+                        "name": "transfereeIds",
+                        "in": "query",
+                        "description": "list of transferee ids are required",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentError"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "content": {
+                            "\"application/json\"": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "AssignmentError": {
+                "type": "object",
+                "properties": {
+                    "apiVersion": {
+                        "type": "string"
+                    },
+                    "uniqueId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "error": {
+                        "$ref": "#/components/schemas/ErrorBlock"
+                    }
+                }
+            },
+            "Error": {
+                "type": "object",
+                "properties": {
+                    "domain": {
+                        "type": "string"
+                    },
+                    "reason": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ErrorBlock": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "errors": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Error"
+                        }
+                    }
+                }
+            },
+            "EmployeeResourceMetaDTO": {
+                "required": [
+                    "airesAssignmentId",
+                    "resource"
+                ],
+                "type": "object",
+                "properties": {
+                    "airesAssignmentId": {
+                        "maximum": 999999999,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "resource": {
+                        "pattern": "^(mspec|emac)$",
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            },
+            "EmployeeResponseDTO": {
+                "type": "object",
+                "properties": {
+                    "airesAssignmentId": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "syncDate": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "resource": {
+                        "type": "string"
+                    }
+                }
+            },
+            "AssignmentDTO": {
+                "required": [
+                    "number"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "links": {
+                        "$ref": "#/components/schemas/Links"
+                    },
+                    "number": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "pattern": "^(EQASAR|EQASCO|EQASAC|EQASOH|EQASIA)$",
+                        "type": "string"
+                    },
+                    "type": {
+                        "maxLength": 6,
+                        "minLength": 0,
+                        "pattern": "^(CC0112|CC0113|CC0114|CC0115|CC0116|CC0117|CC0118|CC0119|CC0120|CC0121)$",
+                        "type": "string"
+                    },
+                    "phase": {
+                        "pattern": "^(CC0126|EQAPPA|EQAPOA|EQAPRP|EQAPCP|CC0142|CC0143)$",
+                        "type": "string"
+                    },
+                    "internationalRelo": {
+                        "type": "boolean"
+                    },
+                    "createBy": {
+                        "type": "string"
+                    },
+                    "createDate": {
+                        "type": "string"
+                    },
+                    "lastUpdateBy": {
+                        "type": "string"
+                    },
+                    "lastUpdateDate": {
+                        "type": "string"
+                    },
+                    "vip": {
+                        "pattern": "^(Y|N)$",
+                        "type": "string"
+                    },
+                    "relocationReason": {
+                        "pattern": "^(CC0122|CC0123|CC0124|CC0125)$",
+                        "type": "string"
+                    },
+                    "homeowner": {
+                        "pattern": "^(Y|N)$",
+                        "type": "string"
+                    },
+                    "defaultCurrency": {
+                        "maxLength": 3,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "effectiveDate": {
+                        "type": "string"
+                    },
+                    "startDate": {
+                        "type": "string"
+                    },
+                    "scheduledEndDate": {
+                        "type": "string"
+                    },
+                    "actualEndDate": {
+                        "type": "string"
+                    },
+                    "homeCountryDepartureDate": {
+                        "type": "string"
+                    },
+                    "hostCountryArrivalDate": {
+                        "type": "string"
+                    },
+                    "fromCity": {
+                        "maxLength": 50,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "fromStateProvince": {
+                        "maxLength": 50,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "fromCountry": {
+                        "maxLength": 50,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "fromCurrency": {
+                        "maxLength": 3,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "toCity": {
+                        "maxLength": 50,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "toStateProvince": {
+                        "maxLength": 50,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "toCountry": {
+                        "maxLength": 50,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "toCurrency": {
+                        "maxLength": 3,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "fromTitle": {
+                        "maxLength": 50,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "toTitle": {
+                        "maxLength": 50,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "fromEmployeeId": {
+                        "maxLength": 50,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "toEmployeeId": {
+                        "maxLength": 50,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "employee": {
+                        "$ref": "#/components/schemas/EmployeeDTO"
+                    },
+                    "relocationPolicy": {
+                        "$ref": "#/components/schemas/RelocationPolicyDTO"
+                    }
+                }
+            },
+            "CompanyDTO": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "links": {
+                        "$ref": "#/components/schemas/Links"
+                    }
+                }
+            },
+            "EmployeeDTO": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "links": {
+                        "$ref": "#/components/schemas/Links"
+                    },
+                    "systemNumber": {
+                        "type": "string"
+                    },
+                    "createBy": {
+                        "type": "string"
+                    },
+                    "createDate": {
+                        "type": "string"
+                    },
+                    "lastUpdateBy": {
+                        "type": "string"
+                    },
+                    "lastUpdateDate": {
+                        "type": "string"
+                    },
+                    "userIdEmailLastUpdateBy": {
+                        "type": "string"
+                    },
+                    "userIdEmailLastUpdateDate": {
+                        "type": "string"
+                    },
+                    "birthCountry": {
+                        "type": "string"
+                    },
+                    "birthDate": {
+                        "type": "string"
+                    },
+                    "birthState": {
+                        "type": "string"
+                    },
+                    "employmentStatus": {
+                        "type": "string"
+                    },
+                    "employmentType": {
+                        "type": "string"
+                    },
+                    "firstName": {
+                        "type": "string"
+                    },
+                    "formerName": {
+                        "type": "string"
+                    },
+                    "gender": {
+                        "type": "string"
+                    },
+                    "hireCity": {
+                        "type": "string"
+                    },
+                    "hireCountry": {
+                        "type": "string"
+                    },
+                    "hireDate": {
+                        "type": "string"
+                    },
+                    "hireState": {
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "type": "string"
+                    },
+                    "maritalStatus": {
+                        "type": "string"
+                    },
+                    "middleName": {
+                        "type": "string"
+                    },
+                    "preferredName": {
+                        "type": "string"
+                    },
+                    "prefix": {
+                        "type": "string"
+                    },
+                    "primaryCitizenship": {
+                        "type": "string"
+                    },
+                    "secondaryCitizenship": {
+                        "type": "string"
+                    },
+                    "suffix": {
+                        "type": "string"
+                    },
+                    "terminationDate": {
+                        "type": "string"
+                    },
+                    "terminationReason": {
+                        "type": "string"
+                    },
+                    "userIdEmail": {
+                        "type": "string"
+                    },
+                    "company": {
+                        "$ref": "#/components/schemas/CompanyDTO"
+                    }
+                }
+            },
+            "Link": {
+                "type": "object",
+                "properties": {
+                    "href": {
+                        "type": "string"
+                    },
+                    "meta": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "Links": {
+                "type": "object",
+                "properties": {
+                    "links": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/Link"
+                        }
+                    }
+                }
+            },
+            "RelocationPolicyDTO": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "links": {
+                        "$ref": "#/components/schemas/Links"
+                    }
+                }
+            },
+            "Assignment": {
+                "required": [
+                    "assignmentId",
+                    "assignmentStatusCode",
+                    "bookDate",
+                    "companyId",
+                    "expenseMgmtInd",
+                    "repatriationInd",
+                    "updatedDate"
+                ],
+                "type": "object",
+                "properties": {
+                    "assignmentId": {
+                        "maximum": 999999999,
+                        "type": "integer",
+                        "description": "assignment Id from Aires database",
+                        "format": "int64",
+                        "example": 12345
+                    },
+                    "companyId": {
+                        "maximum": 999999999,
+                        "type": "integer",
+                        "description": "company Id from Aires database",
+                        "format": "int64",
+                        "example": 12345
+                    },
+                    "corporationPolicyId": {
+                        "maximum": 999999999,
+                        "type": "integer",
+                        "description": "corporation policy Id from Aires database",
+                        "format": "int64",
+                        "example": 12345
+                    },
+                    "assignmentPolicy": {
+                        "maxLength": 100,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Assignment policy is the corporation policy name"
+                    },
+                    "assignmentStatusCode": {
+                        "maxLength": 4,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Assignment status code (ACTV, INAC, CNCL, etc.)",
+                        "example": "ACTV"
+                    },
+                    "assignmentTypeCode": {
+                        "maxLength": 4,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Assignment type code (PERM, LGTM)",
+                        "example": "PERM"
+                    },
+                    "bookDate": {
+                        "type": "string",
+                        "description": "Assignment book date",
+                        "format": "date-time"
+                    },
+                    "destCountryName": {
+                        "maxLength": 40,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Destination country",
+                        "example": "FRANCE"
+                    },
+                    "expenseMgmtInd": {
+                        "pattern": "^(Y|N)$",
+                        "type": "string",
+                        "description": "Expense management indicator. Can be Y or N only",
+                        "example": "Y"
+                    },
+                    "managerComment": {
+                        "maxLength": 4000,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Manager comments"
+                    },
+                    "origCountryName": {
+                        "maxLength": 40,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Origin country",
+                        "example": "UNITED KINGDOM"
+                    },
+                    "repatriationInd": {
+                        "pattern": "^(Y|N)$",
+                        "type": "string",
+                        "description": "Repatriation indicator. Can be Y or N only",
+                        "example": "Y"
+                    },
+                    "transferToRmsDate": {
+                        "type": "string",
+                        "description": "Transfer to RMS date",
+                        "format": "date-time"
+                    },
+                    "confidentialInd": {
+                        "pattern": "^(Y|N)$",
+                        "type": "string",
+                        "description": "Confidential indicator. Can be Y or N only",
+                        "example": "N"
+                    },
+                    "vipInd": {
+                        "pattern": "^(Y|N)$",
+                        "type": "string",
+                        "description": "VIP indicator. Can be Y or N only",
+                        "example": "N"
+                    },
+                    "updatedBy": {
+                        "maximum": 9999,
+                        "type": "integer",
+                        "description": "Updated By Employee Number",
+                        "format": "int64",
+                        "example": 499
+                    },
+                    "updatedDate": {
+                        "type": "string",
+                        "description": "Updated Date",
+                        "format": "date-time"
+                    },
+                    "transferee": {
+                        "$ref": "#/components/schemas/Transferee"
+                    },
+                    "parentTransfereeId": {
+                        "maximum": 999999999,
+                        "type": "integer",
+                        "description": "Parent Transferee Id",
+                        "format": "int64"
+                    },
+                    "assignmentAddressList": {
+                        "type": "array",
+                        "description": "Assignment address list. Contains origin and destination addresses",
+                        "items": {
+                            "$ref": "#/components/schemas/Assignment Address"
+                        }
+                    },
+                    "companyPartnerMappingList": {
+                        "type": "array",
+                        "description": "Company Mapping List.  Should contain company id in different vendor systems",
+                        "items": {
+                            "$ref": "#/components/schemas/Company Partner Mapping"
+                        }
+                    },
+                    "evipInd": {
+                        "type": "string"
+                    }
+                },
+                "description": "Contains the Aires assignment details"
+            },
+            "Assignment Address": {
+                "required": [
+                    "addressId",
+                    "assignmentId"
+                ],
+                "type": "object",
+                "properties": {
+                    "addressId": {
+                        "maximum": 999999999,
+                        "type": "integer",
+                        "description": "addressId is the unique identifier",
+                        "format": "int64",
+                        "example": 1
+                    },
+                    "assignmentId": {
+                        "maximum": 999999999,
+                        "type": "integer",
+                        "description": "assignmentId is the link to the assignment",
+                        "format": "int64",
+                        "example": 1
+                    },
+                    "locationTypeCode": {
+                        "maxLength": 4,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Location type code could be origin (ORIG) or destination (DEST)",
+                        "example": "ORIG"
+                    },
+                    "streetAddr1": {
+                        "maxLength": 200,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Street address 1",
+                        "example": "500 Center Ave"
+                    },
+                    "streetAddr2": {
+                        "maxLength": 200,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Street address 2",
+                        "example": "Suite 300"
+                    },
+                    "city": {
+                        "maxLength": 60,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "City",
+                        "example": "Pittsburgh"
+                    },
+                    "stateCode": {
+                        "maxLength": 2,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "State",
+                        "example": "PA"
+                    },
+                    "province": {
+                        "maxLength": 60,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Province"
+                    },
+                    "zipCode": {
+                        "maxLength": 10,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Zip code",
+                        "example": "15222"
+                    },
+                    "countryCode": {
+                        "maxLength": 4,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Country code (2-letter code)",
+                        "example": "US"
+                    },
+                    "startDate": {
+                        "type": "string",
+                        "description": "startDate is optional",
+                        "format": "date-time"
+                    },
+                    "endDate": {
+                        "type": "string",
+                        "description": "endDate is optional",
+                        "format": "date-time"
+                    },
+                    "validInd": {
+                        "pattern": "^(Y|N)$",
+                        "type": "string",
+                        "description": "Valid indicator can be Y or N only",
+                        "example": "Y"
+                    },
+                    "updatedBy": {
+                        "maximum": 9999,
+                        "type": "integer",
+                        "description": "Updated By Employee Number",
+                        "format": "int64",
+                        "example": 499
+                    },
+                    "updatedByUsername": {
+                        "maxLength": 340,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "The username that updated the record"
+                    },
+                    "updatedDate": {
+                        "type": "string",
+                        "description": "Updated Date",
+                        "format": "date-time"
+                    }
+                },
+                "description": "Contains the address details of the transferee in Aires database"
+            },
+            "Company Partner Mapping": {
+                "required": [
+                    "companyPartnerMappingId"
+                ],
+                "type": "object",
+                "properties": {
+                    "companyPartnerMappingId": {
+                        "maximum": 999999999,
+                        "type": "integer",
+                        "description": "companyPartnerMappingId is the unique identifier",
+                        "format": "int64",
+                        "example": 1
+                    },
+                    "companyId": {
+                        "maximum": 999999999,
+                        "type": "integer",
+                        "description": "companyId",
+                        "format": "int64",
+                        "example": 49211
+                    },
+                    "partnerId": {
+                        "maximum": 999999999,
+                        "type": "integer",
+                        "description": "partnerId",
+                        "format": "int64",
+                        "example": 96692
+                    },
+                    "partnerCompanyId": {
+                        "maximum": 999999999,
+                        "type": "integer",
+                        "description": "mapped company id",
+                        "format": "int64",
+                        "example": 2
+                    },
+                    "createdBy": {
+                        "maximum": 9999,
+                        "type": "integer",
+                        "description": "Created By",
+                        "format": "int64",
+                        "example": 446
+                    },
+                    "createdDate": {
+                        "type": "string",
+                        "description": "Created date of the record",
+                        "format": "date"
+                    },
+                    "updatedBy": {
+                        "maximum": 9999,
+                        "type": "integer",
+                        "description": "Updated By",
+                        "format": "int64",
+                        "example": 446
+                    },
+                    "updatedDate": {
+                        "type": "string",
+                        "description": "Updated date of the record",
+                        "format": "date"
+                    }
+                },
+                "description": "Contains the mapping between aires company id and third party company id"
+            },
+            "Country Codes": {
+                "required": [
+                    "countryCode",
+                    "countryName",
+                    "countryRegion"
+                ],
+                "type": "object",
+                "properties": {
+                    "countryCode": {
+                        "maxLength": 4,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Country Code",
+                        "example": "US"
+                    },
+                    "countryName": {
+                        "maxLength": 40,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Country Name",
+                        "example": "United States"
+                    },
+                    "countryRegion": {
+                        "maxLength": 30,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Country Region",
+                        "example": "North America"
+                    },
+                    "accountIbanNumber": {
+                        "type": "string",
+                        "description": "Account Iban Number"
+                    },
+                    "countryDisplayName": {
+                        "maxLength": 40,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Country Display Name",
+                        "example": "United States"
+                    },
+                    "defaultTimeZone": {
+                        "maxLength": 255,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Default Time Zone",
+                        "example": "America/New_York"
+                    },
+                    "swiftSortRouting": {
+                        "maxLength": 255,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Swift Sort Routing",
+                        "example": "Please enter SWIFT code of 8 or 11 alphanumeric characters"
+                    },
+                    "countryISDCode": {
+                        "maximum": 999,
+                        "type": "number",
+                        "description": "Country ISD Code",
+                        "example": 123
+                    },
+                    "country3CharCode": {
+                        "maxLength": 3,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Country 3 Character Code",
+                        "example": "USA"
+                    },
+                    "activeInd": {
+                        "pattern": "^(A|N)$",
+                        "type": "string",
+                        "description": "Active Ind",
+                        "example": "A"
+                    },
+                    "countryMappingList": {
+                        "type": "array",
+                        "description": "Country Mapping List",
+                        "items": {
+                            "$ref": "#/components/schemas/Country Codes Mapping"
+                        }
+                    }
+                },
+                "description": "Contains the Aires country codes info"
+            },
+            "Country Codes Mapping": {
+                "type": "object",
+                "properties": {
+                    "countryCode": {
+                        "maxLength": 3,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Country Code in Aires",
+                        "example": "NIR"
+                    },
+                    "partnerCountryCode": {
+                        "maxLength": 3,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Third Party Code",
+                        "example": "GBR"
+                    },
+                    "partnerId": {
+                        "maximum": 999999999,
+                        "type": "integer",
+                        "description": "Partner Id unique id in Aires DB",
+                        "format": "int64",
+                        "example": 96692
+                    },
+                    "createdBy": {
+                        "maximum": 9999,
+                        "type": "integer",
+                        "description": "Created By",
+                        "format": "int64",
+                        "example": 446
+                    },
+                    "createdDate": {
+                        "type": "string",
+                        "description": "Created date of the record",
+                        "format": "date"
+                    },
+                    "updatedBy": {
+                        "maximum": 9999,
+                        "type": "integer",
+                        "description": "Updated By",
+                        "format": "int64",
+                        "example": 446
+                    },
+                    "updatedDate": {
+                        "type": "string",
+                        "description": "Updated date of the record",
+                        "format": "date"
+                    }
+                },
+                "description": "Contains the country codes mapped to third party vendor codes"
+            },
+            "Gender Codes Mapping": {
+                "type": "object",
+                "properties": {
+                    "genderCode": {
+                        "maxLength": 1,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Gender Code in Aires",
+                        "example": "M"
+                    },
+                    "partnerGenderCode": {
+                        "maxLength": 25,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Gender Code in Vendor Db"
+                    },
+                    "partnerId": {
+                        "maximum": 999999999,
+                        "type": "integer",
+                        "description": "Partner Id unique id in Aires DB",
+                        "format": "int64",
+                        "example": 96692
+                    },
+                    "createdBy": {
+                        "maximum": 9999,
+                        "type": "integer",
+                        "description": "Created By",
+                        "format": "int64",
+                        "example": 446
+                    },
+                    "createdDate": {
+                        "type": "string",
+                        "description": "Created date of the record",
+                        "format": "date"
+                    },
+                    "updatedBy": {
+                        "maximum": 9999,
+                        "type": "integer",
+                        "description": "Updated By",
+                        "format": "int64",
+                        "example": 446
+                    },
+                    "updatedDate": {
+                        "type": "string",
+                        "description": "Updated date of the record",
+                        "format": "date"
+                    }
+                },
+                "description": "Contains the gender codes mapped to third party vendor codes"
+            },
+            "Journey Meta Data": {
+                "required": [
+                    "journeyMetaDataId",
+                    "parentTransfereeId",
+                    "transfereeId"
+                ],
+                "type": "object",
+                "properties": {
+                    "journeyMetaDataId": {
+                        "maximum": 999999999,
+                        "type": "integer",
+                        "description": "journeyMetaDataId Id from Aires database",
+                        "format": "int64",
+                        "example": 12345
+                    },
+                    "parentTransfereeId": {
+                        "maximum": 999999999,
+                        "type": "integer",
+                        "description": "parentTransfereeId Id from Aires database",
+                        "format": "int64",
+                        "example": 12345
+                    },
+                    "transfereeId": {
+                        "maximum": 999999999,
+                        "type": "integer",
+                        "description": "transfereeId Id from Aires database",
+                        "format": "int64",
+                        "example": 12345
+                    },
+                    "assignmentId": {
+                        "maximum": 999999999,
+                        "type": "integer",
+                        "description": "assignmentId from Aires database",
+                        "format": "int64",
+                        "example": 12345
+                    }
+                },
+                "description": "Contains the Aires parent transferee id details of the transferee"
+            },
+            "Prefix Codes Mapping": {
+                "type": "object",
+                "properties": {
+                    "prefixCode": {
+                        "maxLength": 25,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Prefix Code in Aires",
+                        "example": "MR"
+                    },
+                    "partnerPrefixCode": {
+                        "maxLength": 25,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Prefix Code in Vendor Db",
+                        "example": "EQPRMR"
+                    },
+                    "partnerId": {
+                        "maximum": 999999999,
+                        "type": "integer",
+                        "description": "Partner Id unique id in Aires DB",
+                        "format": "int64",
+                        "example": 96692
+                    },
+                    "createdBy": {
+                        "maximum": 9999,
+                        "type": "integer",
+                        "description": "Created By",
+                        "format": "int64",
+                        "example": 446
+                    },
+                    "createdDate": {
+                        "type": "string",
+                        "description": "Created date of the record",
+                        "format": "date"
+                    },
+                    "updatedBy": {
+                        "maximum": 9999,
+                        "type": "integer",
+                        "description": "Updated By",
+                        "format": "int64",
+                        "example": 446
+                    },
+                    "updatedDate": {
+                        "type": "string",
+                        "description": "Updated date of the record",
+                        "format": "date"
+                    }
+                },
+                "description": "Contains the prefix codes mapped to third party vendor codes"
+            },
+            "Suffix Codes Mapping": {
+                "type": "object",
+                "properties": {
+                    "suffixCode": {
+                        "maxLength": 25,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Suffix Code in Aires",
+                        "example": "JR"
+                    },
+                    "partnerSuffixCode": {
+                        "maxLength": 25,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Suffix Code Vendor Code",
+                        "example": "EQSFJR"
+                    },
+                    "partnerId": {
+                        "maximum": 999999999,
+                        "type": "integer",
+                        "description": "Partner Id unique id in Aires DB",
+                        "format": "int64",
+                        "example": 96692
+                    },
+                    "createdBy": {
+                        "maximum": 9999,
+                        "type": "integer",
+                        "description": "Created By",
+                        "format": "int64",
+                        "example": 446
+                    },
+                    "createdDate": {
+                        "type": "string",
+                        "description": "Created date of the record",
+                        "format": "date"
+                    },
+                    "updatedBy": {
+                        "maximum": 9999,
+                        "type": "integer",
+                        "description": "Updated By",
+                        "format": "int64",
+                        "example": 446
+                    },
+                    "updatedDate": {
+                        "type": "string",
+                        "description": "Updated date of the record",
+                        "format": "date"
+                    }
+                },
+                "description": "Contains the suffix codes mapped to third party vendor codes"
+            },
+            "Transferee": {
+                "required": [
+                    "transfereeId"
+                ],
+                "type": "object",
+                "properties": {
+                    "transfereeId": {
+                        "maximum": 999999999,
+                        "type": "integer",
+                        "description": "transferee id from aires database",
+                        "format": "int64",
+                        "example": 12345
+                    },
+                    "lastName": {
+                        "maxLength": 60,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Transferee's last name",
+                        "example": "Smith"
+                    },
+                    "firstName": {
+                        "maxLength": 30,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Transferee's first name",
+                        "example": "John"
+                    },
+                    "middleName": {
+                        "maxLength": 30,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Transferee's middle name"
+                    },
+                    "maidenName": {
+                        "maxLength": 60,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Transferee's maiden name",
+                        "example": "Smith"
+                    },
+                    "prefixCode": {
+                        "maxLength": 100,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Transferee's prefix",
+                        "example": "Mr."
+                    },
+                    "suffixCode": {
+                        "maxLength": 15,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Transferee's suffix",
+                        "example": "II"
+                    },
+                    "genderCode": {
+                        "maxLength": 1,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Transferee's gender. M or F",
+                        "example": "F"
+                    },
+                    "birthDate": {
+                        "type": "string",
+                        "description": "Birth date",
+                        "format": "date-time"
+                    },
+                    "citizenshipCode": {
+                        "maxLength": 4,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Citizenship"
+                    },
+                    "originEmail": {
+                        "maxLength": 100,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Origin email"
+                    },
+                    "destEmail": {
+                        "maxLength": 100,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Destination email"
+                    },
+                    "contactFirstName": {
+                        "maxLength": 30,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Contact first name"
+                    },
+                    "contactLastName": {
+                        "maxLength": 60,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Contact last name"
+                    },
+                    "homeStatusCode": {
+                        "maxLength": 5,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Homeowner status - OWN, RENT, OTHER",
+                        "example": "OWN"
+                    },
+                    "previousExperienceInd": {
+                        "pattern": "^(Y|N)$",
+                        "type": "string",
+                        "description": "Previous experience indicator. Can be Y or N only",
+                        "example": "Y"
+                    },
+                    "preferedCommnCode": {
+                        "maxLength": 4,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Preferred communication. Can be PHON or EMAL",
+                        "example": "EMAL"
+                    },
+                    "transfereeComments": {
+                        "maxLength": 500,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Transferee comments"
+                    },
+                    "updatedBy": {
+                        "maximum": 9999,
+                        "type": "integer",
+                        "description": "Updated By Employee Number",
+                        "format": "int32",
+                        "example": 499
+                    },
+                    "updatedDate": {
+                        "type": "string",
+                        "description": "Updated Date",
+                        "format": "date-time"
+                    },
+                    "receiveEmailInd": {
+                        "maxLength": 8,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Receive email indicator. Can be Y or N only",
+                        "example": "Y"
+                    },
+                    "gtnStatusCode": {
+                        "maxLength": 8,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "GTN status code",
+                        "example": "REQSTD"
+                    },
+                    "title": {
+                        "maxLength": 100,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Transferee title",
+                        "example": "VP"
+                    },
+                    "grade": {
+                        "maxLength": 60,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Transferee salary grade"
+                    },
+                    "transferToPayablesInd": {
+                        "maximum": 1,
+                        "type": "integer",
+                        "description": "Transfer to payables indicator. Can be 0 or 1. Default is 0",
+                        "format": "int32",
+                        "example": 0
+                    },
+                    "transferToPayablesDate": {
+                        "type": "string",
+                        "description": "Transfer to payables date",
+                        "format": "date-time"
+                    },
+                    "transferTypeCode": {
+                        "maxLength": 8,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Transfer type code (NEWHIRE, TRANSFER)",
+                        "example": "NEWHIRE"
+                    },
+                    "familySize": {
+                        "maximum": 9999,
+                        "type": "integer",
+                        "description": "Transferee family size",
+                        "format": "int32",
+                        "example": 4
+                    },
+                    "numberDependents": {
+                        "maximum": 9999,
+                        "type": "integer",
+                        "description": "Number of dependents",
+                        "format": "int32",
+                        "example": 2
+                    },
+                    "filingStatusCode": {
+                        "maxLength": 8,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Filing status code",
+                        "example": "SINGLE"
+                    },
+                    "salary": {
+                        "maximum": 999999999,
+                        "type": "number",
+                        "description": "Transferee salary",
+                        "example": 98000
+                    },
+                    "salaryComments": {
+                        "maxLength": 250,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Salary comments"
+                    },
+                    "salaryCurrencyCode": {
+                        "maxLength": 8,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Salary currency code",
+                        "example": "USD"
+                    },
+                    "transfereeDeduction": {
+                        "maxLength": 20,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Transferee deduction",
+                        "example": "Standard"
+                    },
+                    "transfereeEstimate": {
+                        "maximum": 999999999,
+                        "type": "number",
+                        "description": "Transferee estimate",
+                        "example": 30000
+                    },
+                    "taxInfoUpdatedBy": {
+                        "maximum": 999999999,
+                        "type": "integer",
+                        "description": "Tax info updated by",
+                        "format": "int64",
+                        "example": 499
+                    },
+                    "taxInfoUpdateDate": {
+                        "type": "string",
+                        "description": "Tax info update date",
+                        "format": "date-time"
+                    },
+                    "parentTransfereeId": {
+                        "maximum": 999999999,
+                        "type": "integer",
+                        "description": "Parent transferee id",
+                        "format": "int64"
+                    },
+                    "numberDependentsUnder17": {
+                        "maximum": 9999,
+                        "type": "integer",
+                        "description": "Number of dependents under 17",
+                        "format": "int32",
+                        "example": 2
+                    },
+                    "pronounCode": {
+                        "maxLength": 100,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Transferee pronoun"
+                    },
+                    "countryCodeObj": {
+                        "$ref": "#/components/schemas/Country Codes"
+                    },
+                    "maritalStatus": {
+                        "type": "string",
+                        "description": "Marital Status"
+                    },
+                    "assignmentList": {
+                        "type": "array",
+                        "description": "List of Assignments",
+                        "items": {
+                            "$ref": "#/components/schemas/Assignment"
+                        }
+                    },
+                    "journeyMetaData": {
+                        "$ref": "#/components/schemas/Journey Meta Data"
+                    },
+                    "genderCodeMapping": {
+                        "$ref": "#/components/schemas/Gender Codes Mapping"
+                    },
+                    "prefixCodeMapping": {
+                        "$ref": "#/components/schemas/Prefix Codes Mapping"
+                    },
+                    "suffixCodeMapping": {
+                        "$ref": "#/components/schemas/Suffix Codes Mapping"
+                    }
+                },
+                "description": "Contains the Aires transferee details of the assignment"
+            }
+        },
+        "responses": {
+            "forbidden": {
+                "description": "Forbidden"
+            },
+            "unauthorized": {
+                "description": "Unauthorized"
+            }
+        }
+    }
+
+}
